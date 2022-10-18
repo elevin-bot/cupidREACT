@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react"
+import LoginForm from "./login"
+import axios from "axios"
 
-function App() {
+export default function App() {
+  const [user, setUser] = useState("")
+  const [error, setError] = useState("")
+
+  const Login = data => {
+    // API call to login
+    console.log(data)
+    axios.post("/api/session", data)
+      .then((response) => {
+        setUser(data.email)
+        setError("")  
+      })
+      .catch((error) => {
+        if (error.response.status === 500) {
+            setError("Oops, failed to sign up. Please try again.")
+        } else {
+            setError("error")
+        }
+      });
+  }    
+
+  const Logout = () => {setUser("")}
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {(user !== "") ? (
+        <div className="welcome">
+          <h2>Welcome, <span>{user}</span></h2>
+         <button onClick={Logout}>Logout</button>
+        </div>
+      ) : (
+        <LoginForm Login={Login} error={error}/>
+      )}
     </div>
   );
 }
-
-export default App;
+ 

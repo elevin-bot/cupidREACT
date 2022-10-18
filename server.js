@@ -23,7 +23,7 @@ app.use((req, res, next) => {
         req.path
       } at ${new Date()}`
     );
-    next();
+    next();``
   });
   
   app.use(
@@ -36,7 +36,53 @@ app.use((req, res, next) => {
     })
   ); 
 
+// Register  
+app.post("/register", (req, res) => {
+    const {email, password, name, photo_url, gender, age, pref_age_from, pref_age_to, pref_gender} = req.body
+    const hashedPassword = generateHash(password)
+  
+    db.query("SELECT 1 FROM users WHERE email=$1", [email]).then((dbRes) => {
+        if (dbRes.rows.length === 1) {
+            res.status(400).json({ message: "User already exists" });
+        } else {
+            const sql = `insert into users (email, password_hash, name, photo_url, gender, age,
+                 pref_age_from, pref_age_to, pref_gender) values($1,$2,$3,$4,$5,$6,$7,$8,$9)`
 
+            db.query(sql, [email, hashedPassword, name, photo_url, gender, age, pref_age_from, pref_age_to, pref_gender]).then(() => {
+                res.json({})
+            }).catch((err) => {res.status(500).json({})})
+        }
+    })
+})
+
+// Login
+app.post("/api/session", (req, res) => {
+    const { email, password } = req.body
+    console.log(db)
+    db.query("SELECT id, password_hash, name, photo_url from users where email = $1", [email])
+      .then((dbRes) => {
+        if (dbRes.rows.length === 0) {
+            return res.status(400).json({
+                message: "The e-mail address and/or password you specified are not correct."
+            });
+        }
+        const user = dbRes.rows[0];
+        const hashedPassword = user.password;
+        if (isValidPassword(password, hashedPassword)) {
+            req.session.email = email;
+            req.session.user_id = user.id;
+            req.session.user_name = user.name;
+            req.session.user_photo = user.photo_url;
+            return res.json({})
+        } else {
+            return res.status(400).json({
+                message:  "The e-mail address and/or password you specified are not correct."
+            })
+        }
+      })
+      .catch((err) => {res.status(500).json({})})
+  })
+  
 app.get("/api/test", (req, res) => res.json({result: "ok"}));
 
 app.get("*", (req, res) => {
