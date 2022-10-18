@@ -8,7 +8,6 @@ export default function App() {
 
   const Login = data => {
     // API call to login
-    console.log(data)
     axios.post("/api/session", data)
       .then((response) => {
         setUser(data.email)
@@ -18,7 +17,7 @@ export default function App() {
         if (error.response.status === 500) {
             setError("Oops, failed to sign up. Please try again.")
         } else {
-            setError("error")
+            setError(error.response.data.message)
         }
       });
   }    

@@ -58,7 +58,6 @@ app.post("/register", (req, res) => {
 // Login
 app.post("/api/session", (req, res) => {
     const { email, password } = req.body
-    console.log(db)
     db.query("SELECT id, password_hash, name, photo_url from users where email = $1", [email])
       .then((dbRes) => {
         if (dbRes.rows.length === 0) {
@@ -67,12 +66,13 @@ app.post("/api/session", (req, res) => {
             });
         }
         const user = dbRes.rows[0];
-        const hashedPassword = user.password;
+        const hashedPassword = user.password_hash;
         if (isValidPassword(password, hashedPassword)) {
             req.session.email = email;
             req.session.user_id = user.id;
             req.session.user_name = user.name;
             req.session.user_photo = user.photo_url;
+            console.log(req.session)
             return res.json({})
         } else {
             return res.status(400).json({
