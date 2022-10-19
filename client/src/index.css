@@ -5,7 +5,7 @@
     font-family: montserrat, sans-serif;
 }
 
-input, button {
+.input {
     appearance: none;
     background: none;
     border: none;
@@ -53,6 +53,10 @@ form .form-inner .form-group {
     margin-bottom: 15px;
 }
 
+form .form-inner .form-group-radio {
+    margin-bottom: 15px;
+}
+
 .form-inner .form-group label {
     display: block;
     color: #666;
@@ -61,7 +65,17 @@ form .form-inner .form-group {
     transition: 0.4s;
 }
 
+.form-inner .form-group-radio label {
+    color: #666;
+    font-size: 12px;
+    transition: 0.4s;
+}
+
 .form-inner .form-group:focus-within label {
+    color: #fe4880;    
+}
+
+.form-inner .form-group-radio:focus-within .radioLabel {
     color: #fe4880;    
 }
 
@@ -78,7 +92,7 @@ form .form-inner .form-group input:focus {
     box-shadow: 0px 0px 3px rgba(0,0,0,0.2)
 }
 
-form .form-inner input[type="submit"], .welcome button {
+form .form-inner input[type="submit"], input[type="button"], .welcome button {
     display: inline-block;
     padding: 10px 15px;
     border-radius: 8px;
@@ -89,6 +103,7 @@ form .form-inner input[type="submit"], .welcome button {
     color: #fff;
     font-weight: 700;
     cursor: pointer;
+    margin-right: 10px;
 }
 
 form .form-inner input[type="submit"]:hover {
@@ -111,4 +126,14 @@ form .form-inner input[type="submit"]:hover {
     font-size: 14px;
     margin-bottom: 10px;
     color: red;
+}
+
+form .form-inner input[type="radio"] {
+    margin-left: 10px;
+    width:   10px;
+    height:  10px;
+}
+
+.form-inner .form-group-radio .radioButton {
+    font-size: 10px;
 }

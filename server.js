@@ -26,21 +26,24 @@ app.use((req, res, next) => {
     next();``
   });
   
-  app.use(
+app.use(
     expressSession({
-      store: new pgSession({
-        pool: db, // Connects to our postgres db
-        createTableIfMissing: true, // Creates a session table in your database (go look at it!)
-      }),
-      secret: process.env.EXPRESS_SESSION_SECRET_KEY,
+        store: new pgSession({
+            pool: db, // Connects to our postgres db
+            createTableIfMissing: true, // Creates a session table in your database (go look at it!)
+            }),
+        secret: process.env.EXPRESS_SESSION_SECRET_KEY,
     })
-  ); 
+); 
 
 // Register  
-app.post("/register", (req, res) => {
-    const {email, password, name, photo_url, gender, age, pref_age_from, pref_age_to, pref_gender} = req.body
-    const hashedPassword = generateHash(password)
-  
+app.post("/api/register", (req, res) => {
+    let {email, password, name, photo, gender, age, pref_age_from, pref_age_to, pref_gender} = req.body
+    
+    // Replace blanks with NULLs for numeric columns
+    if (pref_age_from === '') pref_age_from = null
+    if (pref_age_to === '') pref_age_to = null
+
     db.query("SELECT 1 FROM users WHERE email=$1", [email]).then((dbRes) => {
         if (dbRes.rows.length === 1) {
             res.status(400).json({ message: "User already exists" });
@@ -48,16 +51,20 @@ app.post("/register", (req, res) => {
             const sql = `insert into users (email, password_hash, name, photo_url, gender, age,
                  pref_age_from, pref_age_to, pref_gender) values($1,$2,$3,$4,$5,$6,$7,$8,$9)`
 
-            db.query(sql, [email, hashedPassword, name, photo_url, gender, age, pref_age_from, pref_age_to, pref_gender]).then(() => {
+            db.query(sql, [email, generateHash(password), name, photo, gender, Number(age), pref_age_from, pref_age_to, pref_gender])
+            .then(() => {
                 res.json({})
-            }).catch((err) => {res.status(500).json({})})
+            }).catch((err) => {
+                console.log(err)
+                res.status(500).json({})})
         }
     })
 })
 
 // Login
-app.post("/api/session", (req, res) => {
+app.post("/api/login", (req, res) => {
     const { email, password } = req.body
+
     db.query("SELECT id, password_hash, name, photo_url from users where email = $1", [email])
       .then((dbRes) => {
         if (dbRes.rows.length === 0) {
@@ -68,6 +75,7 @@ app.post("/api/session", (req, res) => {
         const user = dbRes.rows[0];
         const hashedPassword = user.password_hash;
         if (isValidPassword(password, hashedPassword)) {
+            // Save user info in the local storage
             req.session.email = email;
             req.session.user_id = user.id;
             req.session.user_name = user.name;
@@ -82,7 +90,33 @@ app.post("/api/session", (req, res) => {
       })
       .catch((err) => {res.status(500).json({})})
   })
+
+// Get user info from local storage if exists (if user still logged in)
+app.get("/api/session", (req, res) => {
+    const userSession = {
+        email: req.session.email,
+        user_id: req.session.user_id,
+        name: req.session.name,
+        photo: req.session.user_photo,
+    }  
+    return res.json({userSession})
+  })
   
+  // Logout: destroy session
+  app.delete("/api/session", (req, res) => {
+    if (req.session) {
+        req.session.destroy((err) => {
+            if (err) {
+                res.status(400).json({ message: "Unable to log out" })
+            } else {
+                res.json({ message: "Logout successfull" })
+            }
+        })
+    } else {
+        res.end()
+    }
+  })
+    
 app.get("/api/test", (req, res) => res.json({result: "ok"}));
 
 app.get("*", (req, res) => {
