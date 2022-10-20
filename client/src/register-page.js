@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export default function RegisterForm({Register, loginForm, error}) {
+export default function RegisterPage({Register, displayPage, error}) {
     const [data, setData] = useState({
                                     email: "", 
                                     password: "", 
@@ -61,7 +61,7 @@ export default function RegisterForm({Register, loginForm, error}) {
                     <input type="radio" name="pref_gender" required value="o"  onChange={e => setData({...data, pref_gender: e.target.value})} checked={data.pref_gender === "o"}/> <label className="radioButton">Other</label>
                 </div>
                 <input className="input" type="submit" value="Register"/>
-                <input className="input" type="button" value="Cancel" onClick={loginForm}/>
+                <input className="input" type="button" value="Cancel" onClick={() => displayPage("W")}/>
             </div>
         </form>
   )

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export default function LoginForm({Login, registerForm, error}) {
+export default function LoginPage({Login, displayPage, error}) {
     const [data, setData] = useState({email: "", password: ""})
 
     const submitHandler = e => {
@@ -22,7 +22,8 @@ export default function LoginForm({Login, registerForm, error}) {
                     <input className="input" type="password" name="password" id="password" onChange={e => setData({...data, password: e.target.value})} value={data.password}/>
                 </div>
                 <input className="input" type="submit" value="Login"/>
-                <input className="input" type="button" value="Register" onClick={registerForm}/>
+                <input className="input" type="button" value="Register" onClick={() => displayPage("R")}/>
+                <input className="input" type="button" value="Cancel" onClick={() => displayPage("W")}/>
             </div>
         </form>
   )

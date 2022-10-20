@@ -1,7 +1,8 @@
 Screens:
-    Log in with register button - title
+	Welcome page
+    Log in with register button
 	Register (Create Account)
-	Main default page (after logged in) - title 
+	Main default page (after logged in)
 	Edit profile (includes preferences)	
     Matches
 

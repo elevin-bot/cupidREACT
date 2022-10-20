@@ -1,26 +1,38 @@
 import { useState } from "react"
-import LoginForm from "./login"
 import axios from "axios"
-import RegisterForm from "./register"
+import LoginPage from "./login-page"
+import RegisterPage from "./register-page"
+import WelcomePage from "./welcome-page"
+import MainPage from "./main-page"
+import ProfilePage from "./profile-page"
+import MatchesPage from "./matches-page"
 
 export default function App() {
-  const [user, setUser] = useState("")
-  const [register, setRegister] = useState(false)
+  const [page, setPage] = useState("W")
   const [error, setError] = useState("")
+  let user = {} // Logged on user details
+  let bagel = {}
 
-  // Chekc if user logged in and get user info from session
-  axios.get("/api/session")
-    .then((response) => {
+  // Check if user logged in and get user info from session
+  axios.get("/api/session").then((response) => {
       if (response.data.userSession.user_id) {
-        setUser(response.data.userSession.name)
+        user = response.data.userSession
+        // Get first bagel for user and bagels interests
+        axios.get("/api/main").then((response) => {
+            bagel = response.data
+            setPage("") // Render main page
+        })       
       }
   })
 
-  const Login = data => {
-    // API call to login
-    axios.post("/api/login", data)
-      .then((response) => {
-        setUser(data.email)
+  const displayPage = type => {
+    setPage(type)
+  }  
+
+  const Register = data => {
+    // API call to register
+    axios.post("/api/register", data).then((response) => {
+        setPage("L") // Render login page
       })
       .catch((error) => {
         if (error.response.status === 500) {
@@ -31,22 +43,10 @@ export default function App() {
       });
   }    
 
-  const registerForm = () => {
-    setRegister(true)
-    setError("")
-  }  
-
-  const loginForm = () => {
-    setRegister(false)
-    setError("")
-  }  
-
-  const Register = data => {
-    // API call to register
-    axios.post("/api/register", data)
-      .then((response) => {
-        setUser("") // Render login form
-        setRegister(false)  
+  const Login = data => {
+    // API call to login
+    axios.post("/api/login", data).then((response) => {
+      setPage("")
       })
       .catch((error) => {
         if (error.response.status === 500) {
@@ -58,27 +58,35 @@ export default function App() {
   }    
 
   const Logout = () => {
-    axios.delete("/api/session")
-      .then((response) => {
-        setUser("")
-        setError("")
+    axios.delete("/api/session").then((response) => {
+      setPage("W")
     })
     .catch((err) => {alert(err)})
   }
 
+  const renderPage = () => {
+    switch (page) {
+      case "W":
+        return <WelcomePage displayPage={displayPage}/>
+      case "L":
+        return <LoginPage Login={Login} displayPage={displayPage} error={error}/>
+        case "R":
+          return <RegisterPage Register={Register} displayPage={displayPage} error={error}/>
+        case "P":
+          return <ProfilePage/>
+        case "M":
+          return <MatchesPage/>  
+        default:
+          console.log(user)
+          console.log(bagel)
+          return <MainPage user={user} bagel={bagel} Logout={Logout}/>
+    }
+  }
+
   return (
     <div className="App">
-      {(user !== "") ? (
-        <div className="welcome">
-          <h2>Welcome, <span>{user}</span></h2>
-         <button className="input" onClick={Logout}>Logout</button>
-        </div>
-      ) : ((register) ? (
-            <RegisterForm Register={Register} loginForm={loginForm} error={error}/>
-      ) : (
-            <LoginForm Login={Login} registerForm={registerForm} error={error}/>
-      ))}
+      {renderPage(page)}
     </div>
-  );
+  )
 }
  

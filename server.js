@@ -80,42 +80,76 @@ app.post("/api/login", (req, res) => {
             req.session.user_id = user.id;
             req.session.user_name = user.name;
             req.session.user_photo = user.photo_url;
-            console.log(req.session)
             return res.json({})
         } else {
             return res.status(400).json({
                 message:  "The e-mail address and/or password you specified are not correct."
             })
         }
-      })
-      .catch((err) => {res.status(500).json({})})
+    })
+    .catch((err) => {res.status(500).json({})})
   })
 
-// Get user info from local storage if exists (if user still logged in)
+// Get user info from local storage if exists (if user still logged in, returns user details or empty object if user not in session)
 app.get("/api/session", (req, res) => {
     const userSession = {
         email: req.session.email,
         user_id: req.session.user_id,
-        name: req.session.name,
+        name: req.session.user_name,
         photo: req.session.user_photo,
     }  
     return res.json({userSession})
-  })
+})
   
-  // Logout: destroy session
-  app.delete("/api/session", (req, res) => {
-    if (req.session) {
-        req.session.destroy((err) => {
-            if (err) {
-                res.status(400).json({ message: "Unable to log out" })
-            } else {
-                res.json({ message: "Logout successfull" })
-            }
-        })
-    } else {
-        res.end()
+// Logout: destroy session
+app.delete("/api/session", (req, res) => {
+if (req.session) {
+    req.session.destroy((err) => {
+        if (err) {
+            res.status(400).json({ message: "Unable to log out" })
+        } else {
+            res.json({ message: "Logout successfull" })
+        }
+    })
+} else {
+    res.end()
+}
+})
+
+// Return all the user info and interests for the main page after user logged in
+app.get("/api/main", async (req, res) => {
+    let bagel = {'name': 'No more bagels left'}
+    if (req.session.user_id) {
+        try {
+          // Get next match satisfying user criteria (one match at a time)
+            let sql = `select m.name, m.id, m.age, m.photo_url from users u 
+                              join users m on (u.pref_gender = m.gender or u.pref_gender = 'o') 
+                              and (m.age >= u.pref_age_from or u.pref_age_from is null) and (m.age <= u.pref_age_to or u.pref_age_to is null)
+                              where u.id = $1 and m.id <> u.id and not exists (select 1 from swiped where user_id = u.id and swiped_user_id = m.id) limit 1`
+            let dbRes = await db.query(sql, [req.session.user_id])
+            
+            if (dbRes.rows.length > 0) {
+                bagel = {
+                    name: dbRes.rows[0].name,
+                    id: dbRes.rows[0].id,
+                    age: dbRes.rows[0].age,
+                    photo_url: dbRes.rows[0].photo_url
+                }
+                // Get interests for bagel
+                sql = "select distinct i.code, i.description from interests i join user_interests u on i.code = u.interest_code and u.user_id = $1"
+                dbRes = await db.query(sql , [bagel.id])
+                bagel.interests = dbRes.rows
+        }
+        res.json({bagel})
+        }
+        catch(err) {
+          res.status(500).json({})
+        }
     }
-  })
+})
+      
+    //   return render_template("index.html", user=user, bagel=bagel, user_interests=user_interests)
+  
     
 app.get("/api/test", (req, res) => res.json({result: "ok"}));
 

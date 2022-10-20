@@ -54,3 +54,9 @@ insert into interests values('art', 'Art'), ('cycling', 'Cycling'), ('soccer', '
 -- from swiped s join users u on u.id = s.swiped_user_id and s.liked = True 
 -- where s.user_id = 1
 -- and s.user_id in (select swiped_user_id from swiped where liked = True and user_id = s.swiped_user_id);
+
+-- select m.name, m.id, m.age, m.photo_url 
+-- from users u 
+-- join users m on (u.pref_gender = m.gender or u.pref_gender = 'o') 
+-- and (m.age >= u.pref_age_from or u.pref_age_from is null) and (m.age <= u.pref_age_to or u.pref_age_to is null)
+-- where u.id = 15 and m.id <> u.id and not exists (select 1 from swiped where user_id = u.id and swiped_user_id = m.id) limit 1;
