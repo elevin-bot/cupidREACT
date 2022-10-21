@@ -21,9 +21,9 @@ export default function LoginPage({Login, displayPage, error}) {
                     <label htmlFor="password">Password:</label>
                     <input className="input" type="password" name="password" id="password" onChange={e => setData({...data, password: e.target.value})} value={data.password}/>
                 </div>
-                <input className="input" type="submit" value="Login"/>
-                <input className="input" type="button" value="Register" onClick={() => displayPage("R")}/>
-                <input className="input" type="button" value="Cancel" onClick={() => displayPage("W")}/>
+                <input className="button" type="submit" value="Login"/>
+                <input className="button" type="button" value="Register" onClick={() => displayPage("R")}/>
+                <input className="button" type="button" value="Cancel" onClick={() => displayPage("W")}/>
             </div>
         </form>
   )

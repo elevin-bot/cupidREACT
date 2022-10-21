@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react";
 import axios from "axios"
 import LoginPage from "./login-page"
 import RegisterPage from "./register-page"
@@ -8,22 +8,23 @@ import ProfilePage from "./profile-page"
 import MatchesPage from "./matches-page"
 
 export default function App() {
-  const [page, setPage] = useState("W")
+  const [page, setPage] = useState("")
   const [error, setError] = useState("")
-  let user = {} // Logged on user details
-  let bagel = {}
+  const [user, setUser] = useState({})
 
-  // Check if user logged in and get user info from session
-  axios.get("/api/session").then((response) => {
-      if (response.data.userSession.user_id) {
-        user = response.data.userSession
-        // Get first bagel for user and bagels interests
-        axios.get("/api/main").then((response) => {
-            bagel = response.data
-            setPage("") // Render main page
-        })       
-      }
-  })
+  // Get user info from session
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get("/api/session")
+        if (response.data.userSession.user_id) {
+          setUser(response.data.userSession) 
+          setPage("S") // Render main (swipe) page
+        }       
+        else
+          setPage("W") // Render welcome page
+    }
+    fetchData()
+  })   
 
   const displayPage = type => {
     setPage(type)
@@ -46,7 +47,7 @@ export default function App() {
   const Login = data => {
     // API call to login
     axios.post("/api/login", data).then((response) => {
-      setPage("")
+      setPage("S") // Render main (swipe) page
       })
       .catch((error) => {
         if (error.response.status === 500) {
@@ -59,7 +60,7 @@ export default function App() {
 
   const Logout = () => {
     axios.delete("/api/session").then((response) => {
-      setPage("W")
+      setPage("W") // Render welcome page
     })
     .catch((err) => {alert(err)})
   }
@@ -76,10 +77,8 @@ export default function App() {
           return <ProfilePage/>
         case "M":
           return <MatchesPage/>  
-        default:
-          console.log(user)
-          console.log(bagel)
-          return <MainPage user={user} bagel={bagel} Logout={Logout}/>
+        case "S":
+          return <MainPage user={user} Logout={Logout}/>
     }
   }
 

@@ -60,8 +60,8 @@ export default function RegisterPage({Register, displayPage, error}) {
                     <input type="radio" name="pref_gender" required value="f"  onChange={e => setData({...data, pref_gender: e.target.value})} checked={data.pref_gender === "f"}/> <label className="radioButton">Female</label>
                     <input type="radio" name="pref_gender" required value="o"  onChange={e => setData({...data, pref_gender: e.target.value})} checked={data.pref_gender === "o"}/> <label className="radioButton">Other</label>
                 </div>
-                <input className="input" type="submit" value="Register"/>
-                <input className="input" type="button" value="Cancel" onClick={() => displayPage("W")}/>
+                <input className="button" type="submit" value="Register"/>
+                <input className="button" type="button" value="Cancel" onClick={() => displayPage("W")}/>
             </div>
         </form>
   )

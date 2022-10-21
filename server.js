@@ -148,10 +148,13 @@ app.get("/api/main", async (req, res) => {
     }
 })
       
-    //   return render_template("index.html", user=user, bagel=bagel, user_interests=user_interests)
-  
-    
-app.get("/api/test", (req, res) => res.json({result: "ok"}));
+app.post("/api/like", (req, res) => {
+    const {swiped_user_id, like} = req.body
+    // Update swipe table with a like/not like
+    db.query("insert into swiped (user_id, swiped_user_id, liked) values($1, $2, $3)", [req.session.user_id, swiped_user_id, like])
+    .then((dbRes) => {return res.json({})})
+    .catch((err) => {res.status(500).json({})})
+})
 
 app.get("*", (req, res) => {
     res.setHeader("content-type", "text/html");
