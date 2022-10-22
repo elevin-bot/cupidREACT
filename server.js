@@ -122,6 +122,7 @@ app.delete("/api/session", (req, res) => {
     } else {res.send()}
 })
 
+// Get profile data
 app.get("/api/profile", (req, res) => {
     const sql = "SELECT name, photo_url, gender, age, pref_age_from, pref_age_to, pref_gender from users where id = $1"
     db.query(sql, [req.session.user_id])
@@ -144,6 +145,7 @@ app.get("/api/profile", (req, res) => {
     })
 })
 
+// Update profile
 app.put("/api/profile", (req, res) => {
     let {email, password, name, photo, gender, age, pref_age_from, pref_age_to, pref_gender} = req.body
     
@@ -163,7 +165,7 @@ app.put("/api/profile", (req, res) => {
     })
 })
 
-// Return all the user info and interests for the main page after user logged in
+// Get all the user info and interests for the main page after user logged in
 app.get("/api/main", async (req, res) => {
     let bagel = {'name': 'No more bagels left'}
     if (req.session.user_id) {
@@ -202,6 +204,18 @@ app.post("/api/like", (req, res) => {
     .then((dbRes) => {return res.json({})})
     .catch((err) => {res.status(500).json({})})
 })
+
+ // Get all the matches for user
+app.get("/api/matches", (req, res) => {
+    const sql = `select name, age, photo_url 
+                 from swiped s join users u on u.id = s.swiped_user_id and s.liked = True 
+                 where s.user_id = $1 
+                 and s.user_id in (select swiped_user_id from swiped where liked = True and user_id = s.swiped_user_id)`
+    db.query(sql, [req.session.user_id])
+    .then((dbRes) => {return res.json(dbRes.rows)})
+    .catch((err) => {res.status(500).json({})})
+})
+    
 
 app.get("*", (req, res) => {
     res.setHeader("content-type", "text/html");

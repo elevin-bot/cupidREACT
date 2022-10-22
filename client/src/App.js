@@ -92,7 +92,7 @@ export default function App() {
         case "Profile":
           return <RegisterPage action={Profile} displayPage={displayPage} error={error} newUser={false}/>
         case "Matches":
-          return <MatchesPage/>  
+          return <MatchesPage displayPage={displayPage}/>  
         case "Main":
           return <MainPage user={user} Logout={Logout} displayPage={displayPage}/>
         default:

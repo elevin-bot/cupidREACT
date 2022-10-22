@@ -22,7 +22,6 @@ export default function RegisterPage({action, displayPage, error, newUser}) {
     // Get profile data and populate fields
     const fetchData = async () => {
         const response = await axios.get("/api/profile")
-        console.log(response.data)
         setData(response.data)
     }
 
@@ -79,7 +78,7 @@ export default function RegisterPage({action, displayPage, error, newUser}) {
                     <input type="radio" name="pref_gender" required value="o"  onChange={e => setData({...data, pref_gender: e.target.value})} checked={data.pref_gender === "o"}/> <label className="radioButton">Other</label>
                 </div>
                 <input className="button" type="submit" value={(newUser ? "Register" : "Update")}/>
-                <input className="button" type="button" value="Cancel" onClick={() => displayPage("Welcome")}/>
+                <input className="button" type="button" value="Cancel" onClick={() => displayPage((newUser ? "Welcome" : "Main"))}/>
             </div>
         </form>
   )
