@@ -4,7 +4,6 @@ import LoginPage from "./login-page"
 import RegisterPage from "./register-page"
 import WelcomePage from "./welcome-page"
 import MainPage from "./main-page"
-import ProfilePage from "./profile-page"
 import MatchesPage from "./matches-page"
 
 export default function App() {
@@ -12,19 +11,19 @@ export default function App() {
   const [error, setError] = useState("")
   const [user, setUser] = useState({})
 
-  // Get user info from session
+  // Check if user logged in and get session info
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get("/api/session")
-        if (response.data.userSession.user_id) {
-          setUser(response.data.userSession) 
-          setPage("S") // Render main (swipe) page
+        if (response.data.user_id) {
+          setUser(response.data) 
+          setPage("Main") // Render main (swipe) page
         }       
         else
-          setPage("W") // Render welcome page
+          setPage("Welcome") // Render welcome page
     }
     fetchData()
-  })   
+  }, [])   
 
   const displayPage = type => {
     setPage(type)
@@ -33,7 +32,21 @@ export default function App() {
   const Register = data => {
     // API call to register
     axios.post("/api/register", data).then((response) => {
-        setPage("L") // Render login page
+        setPage("Login") // Render login page
+      })
+      .catch((error) => {
+        if (error.response.status === 500) {
+            setError("Oops, failed to sign up. Please try again.")
+        } else {
+            setError(error.response.data.message)
+        }
+      });
+  }    
+
+  const Profile = data => {
+    // API call to register
+    axios.put("/api/profile", data).then((response) => {
+        setPage("Main") // Render login page
       })
       .catch((error) => {
         if (error.response.status === 500) {
@@ -47,7 +60,9 @@ export default function App() {
   const Login = data => {
     // API call to login
     axios.post("/api/login", data).then((response) => {
-      setPage("S") // Render main (swipe) page
+      // Set session data
+      setUser(response.data) 
+      setPage("Main") // Render main (swipe) page
       })
       .catch((error) => {
         if (error.response.status === 500) {
@@ -60,25 +75,28 @@ export default function App() {
 
   const Logout = () => {
     axios.delete("/api/session").then((response) => {
-      setPage("W") // Render welcome page
+      setPage("Welcome") // Render welcome page
     })
     .catch((err) => {alert(err)})
   }
 
   const renderPage = () => {
+    console.log('renderPage:  ' + page + ', ' + user.email)
     switch (page) {
-      case "W":
+      case "Welcome":
         return <WelcomePage displayPage={displayPage}/>
-      case "L":
+      case "Login":
         return <LoginPage Login={Login} displayPage={displayPage} error={error}/>
-        case "R":
-          return <RegisterPage Register={Register} displayPage={displayPage} error={error}/>
-        case "P":
-          return <ProfilePage/>
-        case "M":
+        case "Register":
+          return <RegisterPage action={Register} displayPage={displayPage} error={error} newUser={true}/>
+        case "Profile":
+          return <RegisterPage action={Profile} displayPage={displayPage} error={error} newUser={false}/>
+        case "Matches":
           return <MatchesPage/>  
-        case "S":
-          return <MainPage user={user} Logout={Logout}/>
+        case "Main":
+          return <MainPage user={user} Logout={Logout} displayPage={displayPage}/>
+        default:
+          return ''
     }
   }
 

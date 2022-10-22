@@ -46,7 +46,7 @@ app.post("/api/register", (req, res) => {
 
     db.query("SELECT 1 FROM users WHERE email=$1", [email]).then((dbRes) => {
         if (dbRes.rows.length === 1) {
-            res.status(400).json({ message: "User already exists" });
+            res.status(400).json({ message: "User already exists" })
         } else {
             const sql = `insert into users (email, password_hash, name, photo_url, gender, age,
                  pref_age_from, pref_age_to, pref_gender) values($1,$2,$3,$4,$5,$6,$7,$8,$9)`
@@ -56,7 +56,8 @@ app.post("/api/register", (req, res) => {
                 res.json({})
             }).catch((err) => {
                 console.log(err)
-                res.status(500).json({})})
+                res.status(500).json({})
+            })
         }
     })
 })
@@ -76,18 +77,25 @@ app.post("/api/login", (req, res) => {
         const hashedPassword = user.password_hash;
         if (isValidPassword(password, hashedPassword)) {
             // Save user info in the local storage
-            req.session.email = email;
-            req.session.user_id = user.id;
-            req.session.user_name = user.name;
-            req.session.user_photo = user.photo_url;
-            return res.json({})
+            req.session.email = email
+            req.session.user_id = user.id
+            req.session.user_name = user.name
+            req.session.user_photo = user.photo_url
+            // Return user details to caller
+            const userSession = {
+                email: req.session.email,
+                user_id: req.session.user_id,
+                name: req.session.user_name,
+                photo: req.session.user_photo,
+            }          
+            return res.json(userSession)
         } else {
             return res.status(400).json({
                 message:  "The e-mail address and/or password you specified are not correct."
             })
-        }
-    })
-    .catch((err) => {res.status(500).json({})})
+          }
+        })
+        .catch((err) => {res.status(500).json({})})
   })
 
 // Get user info from local storage if exists (if user still logged in, returns user details or empty object if user not in session)
@@ -98,22 +106,61 @@ app.get("/api/session", (req, res) => {
         name: req.session.user_name,
         photo: req.session.user_photo,
     }  
-    return res.json({userSession})
+    return res.json(userSession)
 })
   
 // Logout: destroy session
 app.delete("/api/session", (req, res) => {
-if (req.session) {
-    req.session.destroy((err) => {
-        if (err) {
-            res.status(400).json({ message: "Unable to log out" })
-        } else {
-            res.json({ message: "Logout successfull" })
-        }
+    if (req.session) {
+        req.session.destroy((err) => {
+            if (err) {
+                res.status(400).json({ message: "Unable to log out" })
+            } else {
+                res.json({ message: "Logout successfull" })
+            }
+        })
+    } else {res.send()}
+})
+
+app.get("/api/profile", (req, res) => {
+    const sql = "SELECT name, photo_url, gender, age, pref_age_from, pref_age_to, pref_gender from users where id = $1"
+    db.query(sql, [req.session.user_id])
+    .then((dbRes) => {
+        const profile = {
+            email: '',
+            password: '',
+            name: dbRes.rows[0].name,
+            photo: dbRes.rows[0].photo_url,
+            gender: dbRes.rows[0].gender,
+            age: dbRes.rows[0].age,
+            pref_age_from: dbRes.rows[0].pref_age_from,
+            pref_age_to: dbRes.rows[0].pref_age_to,
+            pref_gender: dbRes.rows[0].pref_gender
+        }            
+        res.json(profile)
+    }).catch((err) => {
+        console.log(err)
+        res.status(500).json({})
     })
-} else {
-    res.end()
-}
+})
+
+app.put("/api/profile", (req, res) => {
+    let {email, password, name, photo, gender, age, pref_age_from, pref_age_to, pref_gender} = req.body
+    
+    // Replace blanks with NULLs for numeric columns
+    if (pref_age_from === '') pref_age_from = null
+    if (pref_age_to === '') pref_age_to = null
+
+    const sql = "update users set name=$1, photo_url=$2, gender=$3, age=$4, pref_age_from=$5,pref_age_to=$6, pref_gender=$7 where id =$8"
+
+    db.query(sql, [name, photo, gender, Number(age), pref_age_from, pref_age_to, pref_gender, req.session.user_id])
+    .then(() => {
+        req.session.user_name = name
+        res.json({})
+    }).catch((err) => {
+        console.log(err)
+        res.status(500).json({})
+    })
 })
 
 // Return all the user info and interests for the main page after user logged in
@@ -147,10 +194,10 @@ app.get("/api/main", async (req, res) => {
         }
     }
 })
-      
+
+// Update swipe table with a like/not like
 app.post("/api/like", (req, res) => {
     const {swiped_user_id, like} = req.body
-    // Update swipe table with a like/not like
     db.query("insert into swiped (user_id, swiped_user_id, liked) values($1, $2, $3)", [req.session.user_id, swiped_user_id, like])
     .then((dbRes) => {return res.json({})})
     .catch((err) => {res.status(500).json({})})

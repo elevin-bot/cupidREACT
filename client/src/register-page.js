@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from "react";
+import axios from "axios"
 
-export default function RegisterPage({Register, displayPage, error}) {
+export default function RegisterPage({action, displayPage, error, newUser}) {
     const [data, setData] = useState({
                                     email: "", 
                                     password: "", 
@@ -15,22 +16,39 @@ export default function RegisterPage({Register, displayPage, error}) {
 
     const submitHandler = e => {
         e.preventDefault()
-        Register(data)
+        action(data)
     }
+
+    // Get profile data and populate fields
+    const fetchData = async () => {
+        const response = await axios.get("/api/profile")
+        console.log(response.data)
+        setData(response.data)
+    }
+
+    // Populate profile fields for profile update form
+    useEffect(() => {
+        if (!newUser)
+            fetchData()
+    }, [])
 
     return (
         <form onSubmit={submitHandler}>
             <div className="form-inner">
-                <h2>Register</h2>
+                <h2>{(newUser ? "Register": "Profile Update")}</h2>
                 <div className="error">{error}</div>
-                <div className = "form-group">
-                    <label htmlFor="email">Email:</label>
-                    <input className="input" type="text" name="email" id="email" required onChange={e => setData({...data, email: e.target.value})} value={data.email}/>
+                {newUser && 
+                <div>
+                    <div className = "form-group">
+                        <label htmlFor="email">Email:</label>
+                        <input className="input" type="text" name="email" id="email" required onChange={e => setData({...data, email: e.target.value})} value={data.email}/>
+                    </div>
+                    <div className = "form-group">
+                        <label htmlFor="password">Password:</label>
+                        <input className="input" type="password" name="password" id="password" required onChange={e => setData({...data, password: e.target.value})} value={data.password}/>
+                    </div>
                 </div>
-                <div className = "form-group">
-                    <label htmlFor="password">Password:</label>
-                    <input className="input" type="password" name="password" id="password" required onChange={e => setData({...data, password: e.target.value})} value={data.password}/>
-                </div>
+                }
                 <div className = "form-group">
                     <label htmlFor="name">Name:</label>
                     <input className="input" type="text" name="name" id="name" required onChange={e => setData({...data, name: e.target.value})} value={data.name}/>
@@ -60,8 +78,8 @@ export default function RegisterPage({Register, displayPage, error}) {
                     <input type="radio" name="pref_gender" required value="f"  onChange={e => setData({...data, pref_gender: e.target.value})} checked={data.pref_gender === "f"}/> <label className="radioButton">Female</label>
                     <input type="radio" name="pref_gender" required value="o"  onChange={e => setData({...data, pref_gender: e.target.value})} checked={data.pref_gender === "o"}/> <label className="radioButton">Other</label>
                 </div>
-                <input className="button" type="submit" value="Register"/>
-                <input className="button" type="button" value="Cancel" onClick={() => displayPage("W")}/>
+                <input className="button" type="submit" value={(newUser ? "Register" : "Update")}/>
+                <input className="button" type="button" value="Cancel" onClick={() => displayPage("Welcome")}/>
             </div>
         </form>
   )
