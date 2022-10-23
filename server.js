@@ -167,7 +167,7 @@ app.put("/api/profile", (req, res) => {
 
 // Get all the user info and interests for the main page after user logged in
 app.get("/api/main", async (req, res) => {
-    let bagel = {'name': 'No more bagels left'}
+    let bagel = {'name': 'No more suggestions left. Expand your filters.'}
     if (req.session.user_id) {
         try {
           // Get next match satisfying user criteria (one match at a time)

@@ -2,7 +2,7 @@ export default function WelcomePage({displayPage}) {
     return (
         <div id="banner">
             <div id="banner_inner">
-                <div id="welcome_title" >Cupid</div>
+                <div id="title" >Cupid</div>
                 <input className="button" type="button" value="Login" onClick={() => displayPage("Login")}/>
             </div>
             <div>Over 90% of Cupid Daters are looking for a serious relationship. Can we introduce you?</div>

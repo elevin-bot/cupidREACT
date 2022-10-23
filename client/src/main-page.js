@@ -26,10 +26,10 @@ export default function MainPage({user, Logout, displayPage}) {
         <div id="main">
             <div id="main_user">
                 <img id="user_photo" src={user.photo} height="90" alt="user"/>    
-                <h3>Logged in as {user.name}</h3>
+                <h3 className="name">Logged in as {user.name}</h3>
             </div>            
             <div id="bagel">
-                <h3>{bagel.name} {bagel.age}</h3>
+                <h3 className="name">{bagel.name} {bagel.age}</h3>
                 {bagel.id &&
                 <div>
                     <div id="interests">
@@ -47,7 +47,7 @@ export default function MainPage({user, Logout, displayPage}) {
             <div id="navbar">
                 <input className="button" type="button"  value="Logout" onClick={Logout}/>
                 <input className="button" type="button" value="Edit Profile" onClick={() => displayPage("Profile")}/>
-                <input className="button" type="button" value="Matches" onClick={() => displayPage("Matches")}/>
+                <input className="button" type="button" value="Matched" onClick={() => displayPage("Matches")}/>
             </div>
         </div>
     )

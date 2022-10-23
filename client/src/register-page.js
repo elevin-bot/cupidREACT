@@ -22,7 +22,6 @@ export default function RegisterPage({action, displayPage, error, newUser}) {
     // Get profile data and populate fields
     const fetchData = async () => {
         const response = await axios.get("/api/profile")
-        console.log('fetchdata')
         setData(response.data)
     }
 
