@@ -17,7 +17,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #53565a;
+    background-image: linear-gradient(to bottom right, #ffce00, #fe4880);
+}
+
+.matches {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 form:after {
@@ -32,7 +37,7 @@ form:after {
     background-image: linear-gradient(to bottom right, #ffce00, #fe4880);
 }
 
-form .form-inner {
+form .form-inner, #banner, #main {
     position: relative;
     display: block;
     background-color: #fff;
@@ -110,16 +115,17 @@ form .form-inner .form-group input:focus {
     background-position: 100% 0%;
 }
 
-.welcome h2 {
+#welcome_title {
     color: #888;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 500;
     margin-bottom: 30px;
 }
 
-.welcome h2 span {
-    color: #fe4880;
+#main h3 {
+    color: #888;
     font-weight: 700;
+    font-size: 16px;
 }
 
 .form-inner .error {
@@ -136,4 +142,41 @@ form .form-inner input[type="radio"] {
 
 .form-inner .form-group-radio .radioButton {
     font-size: 10px;
+}
+ 
+#main_user {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#main_user h3 {
+    margin-left: 10px;
+}
+
+#banner_inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+#banner_inner .button {
+    margin-left: 20px;
+}
+
+#bagel h3 {
+    margin-bottom: 5px;
+}
+
+#swipe_buttons {
+    margin: 10px;
+}
+
+#swipe_buttons, #navbar {
+    display: flex;
+    justify-content: center;
+}
+
+.select_button:hover {
+    opacity: 0.5;
 }
