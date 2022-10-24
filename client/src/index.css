@@ -37,7 +37,7 @@ form:after {
     background-image: linear-gradient(to bottom right, #ffce00, #fe4880);
 }
 
-form .form-inner, #banner, #main, #matches-outer {
+form .form-inner, #banner, #main, #matches-outer, #interests-outer {
     position: relative;
     display: block;
     background-color: #fff;
@@ -160,10 +160,6 @@ form .form-inner input[type="radio"] {
     justify-content: space-between;
 }
 
-#banner_inner .button {
-    margin-left: 20px;
-}
-
 #swipe_buttons {
     margin: 10px;
 }
@@ -182,10 +178,10 @@ form .form-inner input[type="radio"] {
     flex-wrap: wrap;
     gap: 7px;
     max-width: 340px;
-    margin-top: 5px;
+    margin: 5px 0;
 }
 
-.interest_item {
+.bagel-interest, .interest-item {
     border-radius: 14px;
     border: 1px solid #888;
     width: auto;
@@ -204,4 +200,13 @@ form .form-inner input[type="radio"] {
 
 #matches-outer h3 {
     margin-bottom: 20px;
+}
+
+#interests .selected {
+    color: rgb(227, 20, 62);
+    border-color: rgb(227,20,62);
+}
+
+.interest-item {
+    cursor: pointer;
 }

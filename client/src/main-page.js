@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 
 export default function MainPage({user, Logout, displayPage}) {
     const [bagel, setBagel] = useState({})
-    const [error, setError] = useState("")
 
     // Get Bagel info from the server
     const fetchData = async () => {
@@ -19,7 +18,6 @@ export default function MainPage({user, Logout, displayPage}) {
         // API call to record a like/unlike and get next bagel
         axios.post("/api/like", data)
         .then((response) => {fetchData()})
-        .catch((error) => {setError("Oops, failed at /api/like.")})       
     }        
 
     return (
@@ -33,7 +31,7 @@ export default function MainPage({user, Logout, displayPage}) {
                 {bagel.id &&
                 <div>
                     <div id="interests">
-                        {bagel.interests.map((item, index) => <div className="interest_item" key={index}>{item.description}</div>)}
+                        {bagel.interests.map((item, index) => <div className="bagel-interest" key={index}>{item.description}</div>)}
                     </div>
 
                     <img id="bagel_photo" src={bagel.photo_url} height="500" alt="bagel"/>

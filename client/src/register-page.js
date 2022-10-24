@@ -67,9 +67,9 @@ export default function RegisterPage({action, displayPage, error, newUser}) {
                 </div>
                 <div className = "form-group">
                     <label htmlFor="pref_age_from">Preference Age from:</label>
-                    <input className="input" type="number" name="pref_age_from" id="pref_age_from"  min="18" max="99" onChange={e => setData({...data, pref_age_from: e.target.value})} value={data.pref_age_from}/>
+                    <input className="input" type="number" name="pref_age_from" id="pref_age_from"  min="18" max="99" onChange={e => setData({...data, pref_age_from: e.target.value})} value={(data.pref_age_from ? data.pref_age_from : '')}/>
                     <label htmlFor="pref_age_to">to: </label>
-                    <input className="input" type="number" name="pref_age_to" id="pref_age_to"  min="18" max="99" onChange={e => setData({...data, pref_age_to: e.target.value})} value={data.pref_age_to}/>
+                    <input className="input" type="number" name="pref_age_to" id="pref_age_to"  min="18" max="99" onChange={e => setData({...data, pref_age_to: e.target.value})} value={(data.pref_age_to ? data.pref_age_to : '')}/>
                 </div>
                 <div className = "form-group-radio">
                     <label className="radioLabel" htmlFor="pref_gender">Gender:</label>
@@ -78,6 +78,7 @@ export default function RegisterPage({action, displayPage, error, newUser}) {
                     <input type="radio" name="pref_gender" required value="o"  onChange={e => setData({...data, pref_gender: e.target.value})} checked={data.pref_gender === "o"}/> <label className="radioButton">Other</label>
                 </div>
                 <input className="button" type="submit" value={(newUser ? "Register" : "Update")}/>
+                <input className="button" type="button" value="Interests" onClick={() => displayPage("Interests")}/>
                 <input className="button" type="button" value="Cancel" onClick={() => displayPage((newUser ? "Welcome" : "Main"))}/>
             </div>
         </form>

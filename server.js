@@ -188,8 +188,8 @@ app.get("/api/main", async (req, res) => {
                 sql = "select distinct i.code, i.description from interests i join user_interests u on i.code = u.interest_code and u.user_id = $1"
                 dbRes = await db.query(sql , [bagel.id])
                 bagel.interests = dbRes.rows
-        }
-        res.json({bagel})
+            }
+            res.json({bagel})
         }
         catch(err) {
           res.status(500).json({})
@@ -215,7 +215,26 @@ app.get("/api/matches", (req, res) => {
     .then((dbRes) => {return res.json(dbRes.rows)})
     .catch((err) => {res.status(500).json({})})
 })
-    
+
+app.get("/api/interests", (req, res) => {
+    // Return a list of all the interest and a flag indicating a selected interest
+    const sql = `select distinct i.code, i.description, case when u.interest_code is null then False else True end as selected from interests i
+                 left join user_interests u on i.code = u.interest_code and  u.user_id = $1`
+    db.query(sql, [req.session.user_id])
+    .then((dbRes) => {return res.json(dbRes.rows)})
+    .catch((err) => {res.status(500).json({})})
+})
+
+app.post("/api/interests_update", (req, res) => {
+    const list = req.body
+    const sql = "insert into user_interests (user_id, interest_code) values($1, $2)"
+    try {    
+        list.forEach(element => {db.query(sql, [req.session.user_id, element])})
+        res.json({})
+    }
+    catch(err) {res.status(500).json({})}
+})
+
 
 app.get("*", (req, res) => {
     res.setHeader("content-type", "text/html");

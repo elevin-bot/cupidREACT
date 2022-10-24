@@ -5,6 +5,7 @@ import RegisterPage from "./register-page"
 import WelcomePage from "./welcome-page"
 import MainPage from "./main-page"
 import MatchesPage from "./matches-page"
+import InterestsPage from "./interests";
 
 export default function App() {
   const [page, setPage] = useState("")
@@ -93,7 +94,9 @@ export default function App() {
           return <RegisterPage action={Profile} displayPage={displayPage} error={error} newUser={false}/>
         case "Matches":
           return <MatchesPage displayPage={displayPage}/>  
-        case "Main":
+          case "Interests":
+            return <InterestsPage displayPage={displayPage}/>  
+          case "Main":
           return <MainPage user={user} Logout={Logout} displayPage={displayPage}/>
         default:
           return ''
