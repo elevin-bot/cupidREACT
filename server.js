@@ -226,10 +226,18 @@ app.get("/api/interests", (req, res) => {
 })
 
 app.post("/api/interests_update", (req, res) => {
-    const list = req.body
-    const sql = "insert into user_interests (user_id, interest_code) values($1, $2)"
+    const interests = req.body
+    
+    const insert_sql = "insert into user_interests (user_id, interest_code) values($1, $2)"
+
     try {    
-        list.forEach(element => {db.query(sql, [req.session.user_id, element])})
+        // Delete all interests and re-insert selected ones only
+        db.query("delete from user_interests where user_id = $1", [req.session.user_id])
+
+        interests.forEach(element => {
+            if (element.selected)
+                db.query(insert_sql, [req.session.user_id, element.code])
+        })
         res.json({})
     }
     catch(err) {res.status(500).json({})}

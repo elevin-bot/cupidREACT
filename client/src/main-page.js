@@ -42,7 +42,7 @@ export default function MainPage({user, Logout, displayPage}) {
                 </div>
                 }
             </div>
-            <div id="navbar">
+            <div id="navbar-main">
                 <input className="button" type="button"  value="Logout" onClick={Logout}/>
                 <input className="button" type="button" value="Edit Profile" onClick={() => displayPage("Profile")}/>
                 <input className="button" type="button" value="Matched" onClick={() => displayPage("Matches")}/>

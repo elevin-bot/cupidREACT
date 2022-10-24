@@ -7,7 +7,6 @@ export default function InterestsPage({displayPage}) {
     // Get Bagel info from the server
     const fetchData = async () => {
         const response = await axios.get("/api/interests")
-        console.log(response.data)
         setInterests(response.data)
     }
 
@@ -16,22 +15,15 @@ export default function InterestsPage({displayPage}) {
 
     const submitHandler = e => {
         e.preventDefault()
-        // Get all interest elements
-        const items = Array.from(document.getElementsByClassName('interest-item'))
-        console.log(items)
-        // Populate array with selected interest codes
-        let data = []
-        items.forEach((item) => {
-            if (item.classList.contains('selected')) 
-                data.push(item.id)
-        })
-        console.log(data)
-        // Post selected interest codes to the server
-        axios.post("/api/interests_update", data)
+        // Post send updated interests back to server for update
+        axios.post("/api/interests_update", interests)
+        displayPage("Profile")
     }        
 
-    const handleClick = event => {
-        event.currentTarget.classList.toggle("selected")
+    const handleClick = index => {
+        let newInterests = [...interests]        
+        newInterests[index].selected = !newInterests[index].selected
+        setInterests(newInterests)
     }
     
     return (
@@ -39,10 +31,10 @@ export default function InterestsPage({displayPage}) {
             <div className="form-inner">
                 <h3 id="title">Interests</h3>
                 <div id="interests">
-                    {interests.map((item, index) => <div className={"interest-item" + (item.selected ? " selected" : "")} key={index} onClick={handleClick} id={item.code}>{item.description}</div>)}
+                    {interests.map((item, index) => <div className={"interest-item" + (item.selected ? " selected" : "")} key={index} onClick={() => handleClick(index)}>{item.description}</div>)}
                 </div>
 
-                <div id="navbar">
+                <div id="navbar-interests">
                     <input className="button" type="submit" value={"Update"}/>
                     <input className="button" type="button" value="Cancel" onClick={() => displayPage("Profile")}/>
                 </div>

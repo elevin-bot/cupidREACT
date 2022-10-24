@@ -164,7 +164,7 @@ form .form-inner input[type="radio"] {
     margin: 10px;
 }
 
-#swipe_buttons, #navbar {
+#swipe_buttons, #navbar-main, #navbar-interests {
     display: flex;
     justify-content: center;
 }
@@ -209,4 +209,8 @@ form .form-inner input[type="radio"] {
 
 .interest-item {
     cursor: pointer;
+}
+
+#navbar-interests {
+    margin-top: 10px;
 }
