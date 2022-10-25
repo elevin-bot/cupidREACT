@@ -12,7 +12,7 @@ export default function App() {
   const [error, setError] = useState("")
   const [user, setUser] = useState({})
 
-  // Check if user logged in and get session info
+  // Get session info. If user logged in (ie session not empty) display main page
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get("/api/session")
