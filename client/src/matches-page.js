@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useState, useEffect } from "react";
 
-export default function MatchesPage({displayPage}) {
+export default function MatchesPage({user, displayPage}) {
     const [matches, setMatches] = useState([])
 
     // Get matches
@@ -13,15 +13,25 @@ export default function MatchesPage({displayPage}) {
     // Run once to get bagel info
     useEffect(() => {fetchData()}, [])         
 
+    // Unmatch and refresh matches page
+    const unmatch = swiped_user_id => {
+      axios.patch("/api/unmatch", {swiped_user_id})
+      .then((response) => {fetchData()})
+
+    }
+
     return (
       <div id="matches-outer">
-        <h3 id="title">Matches</h3>
+        <h3 id="title">Matches<div className="name"> ({user.name})</div></h3>
         {matches.length === 0 && <h3 className="name">No matches yet. Keep swiping!</h3>}
         <div id="matches">
           {
             matches.map((bagel, index) => 
               <div key={index}>
-                <div className="name">{bagel.name} {bagel.age}</div>
+                <div id="matches-inner">
+                  <div className="name">{bagel.name} {bagel.age}</div>
+                  <input className="button" type="button" value="Unmatch" onClick={() => unmatch(bagel.swiped_user_id)}/>                
+                </div>
                 <img className="match_photo" src={bagel.photo_url} height="250" alt={bagel.name}/> 
               </div>
             )

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios"
 
-export default function RegisterPage({action, displayPage, error, newUser}) {
+export default function RegisterPage({user, action, displayPage, error, newUser}) {
     const [data, setData] = useState({
                                     email: "", 
                                     password: "", 
@@ -34,7 +34,7 @@ export default function RegisterPage({action, displayPage, error, newUser}) {
     return (
         <form onSubmit={submitHandler}>
             <div className="form-inner">
-                <h2>{(newUser ? "Register": "Profile Update")}</h2>
+                <h2>{(newUser ? "Register": "Profile Update")}<div className="name">{(!newUser && " (" + user.name + ")")}</div></h2>
                 <div className="error">{error}</div>
                 {newUser && 
                 <div>

@@ -82,20 +82,20 @@ export default function App() {
   }
 
   const renderPage = () => {
-    console.log('renderPage:  ' + page + ', ' + user.email)
+    // console.log('renderPage:  ' + page + ', ' + user.email)
     switch (page) {
       case "Welcome":
         return <WelcomePage displayPage={displayPage}/>
       case "Login":
         return <LoginPage Login={Login} displayPage={displayPage} error={error}/>
         case "Register":
-          return <RegisterPage action={Register} displayPage={displayPage} error={error} newUser={true}/>
+          return <RegisterPage user={user} action={Register} displayPage={displayPage} error={error} newUser={true}/>
         case "Profile":
-          return <RegisterPage action={Profile} displayPage={displayPage} error={error} newUser={false}/>
+          return <RegisterPage user={user} action={Profile} displayPage={displayPage} error={error} newUser={false}/>
         case "Matches":
-          return <MatchesPage displayPage={displayPage}/>  
+          return <MatchesPage user={user} displayPage={displayPage}/>  
           case "Interests":
-            return <InterestsPage displayPage={displayPage}/>  
+            return <InterestsPage user={user} displayPage={displayPage}/>  
           case "Main":
           return <MainPage user={user} Logout={Logout} displayPage={displayPage}/>
         default:

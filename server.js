@@ -201,19 +201,30 @@ app.get("/api/main", async (req, res) => {
 app.post("/api/like", (req, res) => {
     const {swiped_user_id, like} = req.body
     db.query("insert into swiped (user_id, swiped_user_id, liked) values($1, $2, $3)", [req.session.user_id, swiped_user_id, like])
-    .then((dbRes) => {return res.json({})})
+    .then(() => {res.json({})})
     .catch((err) => {res.status(500).json({})})
 })
 
- // Get all the matches for user
+// Get all the matches for user
 app.get("/api/matches", (req, res) => {
-    const sql = `select name, age, photo_url 
+    const sql = `select name, age, photo_url, s.swiped_user_id 
                  from swiped s join users u on u.id = s.swiped_user_id and s.liked = True 
-                 where s.user_id = $1 
-                 and s.user_id in (select swiped_user_id from swiped where liked = True and user_id = s.swiped_user_id)`
+                 where s.user_id = $1 and s.unmatched is null
+                 and s.user_id in (select swiped_user_id from swiped where liked = True 
+                                   and user_id = s.swiped_user_id and unmatched is null)`
     db.query(sql, [req.session.user_id])
     .then((dbRes) => {return res.json(dbRes.rows)})
     .catch((err) => {res.status(500).json({})})
+})
+
+// Unmatch
+app.patch("/api/unmatch", (req, res) => {
+    const sql = `update swiped set unmatched = true where user_id = $1 and swiped_user_id = $2`
+    db.query(sql, [req.session.user_id, req.body.swiped_user_id])
+    .then(() => {res.json({})})
+    .catch((err) => {
+        console.log(err)
+        res.status(500).json({})})
 })
 
 app.get("/api/interests", (req, res) => {

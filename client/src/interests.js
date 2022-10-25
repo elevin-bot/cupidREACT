@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useState, useEffect } from "react";
 
-export default function InterestsPage({displayPage}) {
+export default function InterestsPage({user, displayPage}) {
     const [interests, setInterests] = useState([])
 
     // Get Bagel info from the server
@@ -29,7 +29,7 @@ export default function InterestsPage({displayPage}) {
     return (
         <form onSubmit={submitHandler}>
             <div className="form-inner">
-                <h3 id="title">Interests</h3>
+                <h3 id="title">Interests<div className="name"> ({user.name})</div></h3>
                 <div id="interests">
                     {interests.map((item, index) => <div className={"interest-item" + (item.selected ? " selected" : "")} key={index} onClick={() => handleClick(index)}>{item.description}</div>)}
                 </div>
