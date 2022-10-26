@@ -2,7 +2,7 @@ export default function WelcomePage({displayPage}) {
     return (
         <div id="banner">
             <div id="banner_inner">
-                <div id="title" >Cupid</div>
+                <div id="welcome-title" >Cupid</div>
                 <div id="welcome-buttons">
                     <input className="button" type="button" value="Login" onClick={() => displayPage("Login")}/>
                     <input className="button" type="button" value="Register" onClick={() => displayPage("Register")}/>

@@ -29,7 +29,7 @@ export default function InterestsPage({user, displayPage}) {
     return (
         <form onSubmit={submitHandler}>
             <div className="form-inner">
-                <h3 id="title">Interests<div className="name"> ({user.name})</div></h3>
+                <h2 id="title">Interests<div className="name"> ({user.name})</div></h2>
                 <div id="interests">
                     {interests.map((item, index) => <div className={"interest-item" + (item.selected ? " selected" : "")} key={index} onClick={() => handleClick(index)}>{item.description}</div>)}
                 </div>

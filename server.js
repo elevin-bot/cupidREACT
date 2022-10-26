@@ -12,7 +12,9 @@ const pgSession = require("connect-pg-simple")(expressSession);
 
 const port = process.env.PORT || 3001;
 
-const db = new pg.Pool({database: 'cupid'})
+const db = new pg.Pool({
+    connectionString: process.env.DATABASE_URL || "cupid"
+  })
 
 app.use(express.json());
 app.use(express.static("./client/build"));
@@ -120,6 +122,18 @@ app.delete("/api/session", (req, res) => {
             }
         })
     } else {res.send()}
+})
+
+// Delete account
+app.delete("/api/delete-account", (req, res) => {
+    db.query('delete from users where id = $1', [req.session.user_id])
+    .then(() => {
+        req.session.destroy()
+        res.json({})
+    })
+    .catch((err) => {
+        console.log(err)
+        res.status(500).json({})})
 })
 
 // Get profile data

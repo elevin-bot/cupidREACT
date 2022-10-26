@@ -24,7 +24,7 @@ export default function MainPage({user, Logout, displayPage}) {
         <div id="main">
             <div id="main_user">
                 <img id="user_photo" src={user.photo} height="90" alt="user"/>    
-                <h3 className="name">Logged in as {user.name}</h3>
+                <h2 className="name">Logged in as {user.name}</h2>
             </div>            
             <div id="bagel">
                 <h3 className="name">{bagel.name} {bagel.age}</h3>

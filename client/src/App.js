@@ -13,20 +13,20 @@ export default function App() {
   const [user, setUser] = useState({})
 
   // Get session info. If user logged in (ie session not empty) display main page
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get("/api/session")
-        if (response.data.user_id) {
-          setUser(response.data) 
-          setPage("Main") // Render main (swipe) page
-        }       
-        else
-          setPage("Welcome") // Render welcome page
-    }
-    fetchData()
-  }, [])   
+  const fetchData = async () => {
+    const response = await axios.get("/api/session")
+      if (response.data.user_id) {
+        setUser(response.data) 
+        setPage("Main") // Render main (swipe) page
+      }       
+      else
+        setPage("Welcome") // Render welcome page
+  }
+
+  useEffect(() => {fetchData()}, [])   
 
   const displayPage = type => {
+    setError("") // Clear error message
     setPage(type)
   }  
 
@@ -47,7 +47,7 @@ export default function App() {
   const Profile = data => {
     // API call to register
     axios.put("/api/profile", data).then((response) => {
-        setPage("Main") // Render login page
+        fetchData() // Refresh user data and render main (swipe) page
       })
       .catch((error) => {
         if (error.response.status === 500) {

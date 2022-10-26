@@ -31,10 +31,21 @@ export default function RegisterPage({user, action, displayPage, error, newUser}
             fetchData()
     }, [newUser])
 
+    const deleteAccount = () => {        
+        if (window.confirm("Are you sure you want to delete your account?")) {
+            // API call to delete user account
+            axios.delete("/api/delete-account")
+            .then((response) => {displayPage("Login")})
+        }
+    }        
+
     return (
         <form onSubmit={submitHandler}>
             <div className="form-inner">
-                <h2>{(newUser ? "Register": "Profile Update")}<div className="name">{(!newUser && " (" + user.name + ")")}</div></h2>
+                <div id="profile-header">
+                    <h2>{(newUser ? "Register": "Profile Update")}<div className="name">{(!newUser && " (" + user.name + ")")}</div></h2>
+                    {(!newUser && <input className="button" type="button" value="Delete Account" onClick={deleteAccount}/>)}
+                </div> 
                 <div className="error">{error}</div>
                 {newUser && 
                 <div>
@@ -54,7 +65,7 @@ export default function RegisterPage({user, action, displayPage, error, newUser}
                 </div>
                 <div className = "form-group">
                     <label htmlFor="photo">Photo URL:</label>
-                    <input className="input" type="text" name="photo" id="photo" required onChange={e => setData({...data, photo: e.target.value})} value={data.photo}/>
+                    <input className="input" type="text" placeholder="paste URL here" name="photo" id="photo" required onChange={e => setData({...data, photo: e.target.value})} value={data.photo}/>
                 </div>
                 <div className = "form-group-radio">
                     <label className="radioLabel" htmlFor="gender">Gender:</label>
@@ -78,7 +89,7 @@ export default function RegisterPage({user, action, displayPage, error, newUser}
                     <input type="radio" name="pref_gender" required value="o"  onChange={e => setData({...data, pref_gender: e.target.value})} checked={data.pref_gender === "o"}/> <label className="radioButton">Other</label>
                 </div>
                 <input className="button" type="submit" value={(newUser ? "Register" : "Update")}/>
-                <input className="button" type="button" value="Interests" onClick={() => displayPage("Interests")}/>
+                {(!newUser && <input className="button" type="button" value="Interests" onClick={() => displayPage("Interests")}/>)}
                 <input className="button" type="button" value="Cancel" onClick={() => displayPage((newUser ? "Welcome" : "Main"))}/>
             </div>
         </form>
