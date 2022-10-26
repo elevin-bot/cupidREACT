@@ -102,12 +102,15 @@ app.post("/api/login", (req, res) => {
 
 // Get user info from local storage if exists (if user still logged in, returns user details or empty object if user not in session)
 app.get("/api/session", (req, res) => {
+    console.log('get session start')
     const userSession = {
         email: req.session.email,
         user_id: req.session.user_id,
         name: req.session.user_name,
         photo: req.session.user_photo,
     }  
+    console.log('get session end')
+
     return res.json(userSession)
 })
   
