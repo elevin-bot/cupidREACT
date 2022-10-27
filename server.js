@@ -172,6 +172,7 @@ app.put("/api/profile", (req, res) => {
     db.query(sql, [name, photo, gender, Number(age), pref_age_from, pref_age_to, pref_gender, req.session.user_id])
     .then(() => {
         req.session.user_name = name
+        req.session.user_photo = photo
         res.json({})
     }).catch((err) => {
         console.log(err)

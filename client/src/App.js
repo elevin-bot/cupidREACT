@@ -43,7 +43,7 @@ export default function App() {
         }
       });
   }    
-
+  
   const Profile = data => {
     // API call to register
     axios.put("/api/profile", data).then((response) => {
