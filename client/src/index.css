@@ -214,3 +214,28 @@ form .form-inner input[type="radio"] {
     align-items: baseline;
     justify-content: space-between;
 }
+
+#bagel_photo {
+    position: relative;
+ }
+
+#text-on-image-left, #text-on-image-right {
+    position: absolute;
+    font-size: 20px;
+    border: solid;
+    padding: 0 3px;
+}
+
+#text-on-image-left {
+    left: 4%;
+    bottom: 8%;
+    color: red;
+    transform: rotate(45deg);
+}
+
+#text-on-image-right {
+    right: 10%;
+    bottom: 8%;
+    color: rgb(5, 192, 5);  
+    transform: rotate(-45deg);  
+}

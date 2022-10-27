@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 
 export default function MainPage({user, Logout, displayPage}) {
     const [bagel, setBagel] = useState({})
+    const [showTextRight, setShowTextRight] = useState(false)
+    const [showTextLeft, setShowTextLeft] = useState(false)
 
     // Get Bagel info from the server
     const fetchData = async () => {
@@ -14,10 +16,18 @@ export default function MainPage({user, Logout, displayPage}) {
     useEffect(() => {fetchData()}, [])         
 
     const recordLike = like => {        
-        const data = {swiped_user_id: bagel.id, like: like}
-        // API call to record a like/unlike and get next bagel
-        axios.post("/api/like", data)
-        .then((response) => {fetchData()})
+        // Display text over photo for 5 seconds
+        (like ? setShowTextRight(true) : setShowTextLeft(true))
+        setTimeout(() => {
+            // API call to record a like/unlike and get next bagel
+            const data = {swiped_user_id: bagel.id, like: like}
+            axios.post("/api/like", data)
+            .then((response) => {
+                fetchData()
+                setShowTextRight(false)
+                setShowTextLeft(false)
+            })
+        }, 500)
     }        
 
     return (
@@ -33,8 +43,11 @@ export default function MainPage({user, Logout, displayPage}) {
                     <div id="interests">
                         {bagel.interests.map((item, index) => <div className="bagel-interest" key={index}>{item.description}</div>)}
                     </div>
-
-                    <img id="bagel_photo" src={bagel.photo_url} height="500" alt="bagel"/>
+                    <div id="bagel_photo">
+                        <img src={bagel.photo_url} height="500" alt="bagel"/>
+                        {showTextLeft && <p id='text-on-image-left'>UNLIKE</p>}
+                        {showTextRight && <p id='text-on-image-right'>LIKE</p>}
+                    </div>    
                     <div id="swipe_buttons">
                         <input className="select_button" type="image" height="50" src="/img/cross.jpg" alt="Not like" onClick={() => recordLike(false)}/>
                         <input className="select_button" type="image" height="50" src="/img/love.jpg" alt="Like" onClick={() => recordLike(true)}/>
