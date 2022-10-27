@@ -23,7 +23,7 @@ export default function MatchesPage({user, displayPage}) {
     return (
       <div id="matches-outer">
         <h2 id="title">Matches<div className="name"> ({user.name})</div></h2>
-        {matches.length === 0 && <h3 className="name">No matches yet. Keep swiping!</h3>}
+        {matches.length === 0 && <h2 className="name">No matches yet. Keep swiping!</h2>}
         <div id="matches">
           {
             matches.map((bagel, index) => 
