@@ -126,14 +126,15 @@ app.delete("/api/session", (req, res) => {
 
 // Delete account
 app.delete("/api/delete-account", (req, res) => {
-    db.query('delete from users where id = $1', [req.session.user_id])
-    .then(() => {
+    try {   
+        // Delete child tables first
+        db.query('delete from user_interests where user_id = $1', [req.session.user_id])        
+        db.query('delete from swiped where $1 in (user_id, swiped_user_id)', [req.session.user_id])        
+        db.query('delete from users where id = $1', [req.session.user_id])
         req.session.destroy()
         res.json({})
-    })
-    .catch((err) => {
-        console.log(err)
-        res.status(500).json({})})
+    }
+    catch(err) {res.status(500).json({})}
 })
 
 // Get profile data
