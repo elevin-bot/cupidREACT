@@ -15,11 +15,11 @@ export default function LoginPage({Login, displayPage, error}) {
                 <div className="error">{error}</div>
                 <div className = "form-group">
                     <label htmlFor="email">Email:</label>
-                    <input className="input" type="text" name="email" id="email" onChange={e => setData({...data, email: e.target.value})} value={data.email}/>
+                    <input className="input" type="text" name="email" id="email" required onChange={e => setData({...data, email: e.target.value})} value={data.email}/>
                 </div>
                 <div className = "form-group">
                     <label htmlFor="password">Password:</label>
-                    <input className="input" type="password" name="password" id="password" onChange={e => setData({...data, password: e.target.value})} value={data.password}/>
+                    <input className="input" type="password" name="password" id="password" required onChange={e => setData({...data, password: e.target.value})} value={data.password}/>
                 </div>
                 <input className="button" type="submit" value="Login"/>
                 <input className="button" type="button" value="Register" onClick={() => displayPage("Register")}/>

@@ -45,8 +45,8 @@ export default function MainPage({user, Logout, displayPage}) {
                     </div>
                     <div id="bagel_photo">
                         <img src={bagel.photo_url} height="500" alt="bagel"/>
-                        {showTextLeft && <p id='text-on-image-left'>UNLIKE</p>}
-                        {showTextRight && <p id='text-on-image-right'>LIKE</p>}
+                        {showTextLeft && <p id='text-on-image-left'>PASSED</p>}
+                        {showTextRight && <p id='text-on-image-right'>LIKED</p>}
                     </div>    
                     <div id="swipe_buttons">
                         <input className="select_button" type="image" height="50" src="/img/cross.jpg" alt="Not like" onClick={() => recordLike(false)}/>
